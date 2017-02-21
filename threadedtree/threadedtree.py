@@ -331,14 +331,10 @@ class ThreadedTree(object):
 				current = current.left
 			while current != None:
 				yield current.val
-				current = self._find_next_in_order(current)
-
-	def _find_next_in_order(self, node):
-		if not node.rthreaded:
-			return node.right
-
-		node = node.right
-
-		while node.lthreaded:
-			node = node.left
-		return node
+				if not current.rthreaded:
+					current = current.right
+				else:
+					node = current.right
+					while node.lthreaded:
+						node = node.left
+					current = node
