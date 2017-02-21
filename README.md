@@ -1,5 +1,5 @@
 # threadedtree 
-![Build Status](https://travis-ci.org/MS-DDOS/threadedtree.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/MS-DDOS/threadedtree/badge.svg?branch=master)](https://coveralls.io/github/MS-DDOS/threadedtree?branch=master)
+![Build Status](https://travis-ci.org/MS-DDOS/threadedtree.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/MS-DDOS/threadedtree/badge.svg?branch=master)](https://coveralls.io/github/MS-DDOS/threadedtree?branch=master) [![PyPI version](https://badge.fury.io/py/ThreadedTree.svg)](https://badge.fury.io/py/ThreadedTree)
 
 A carefully implemented double threaded binary search tree in pure python.
 
