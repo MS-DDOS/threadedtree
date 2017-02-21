@@ -146,10 +146,7 @@ class TestUnbalancedThreadedBST(TestCase):
 			assert tree2 != tree3
 			test_suite.sort()
 			assert tree1 == test_suite
-			try:
-				tree1 == {}
-			except TypeError:
-				pass
+			assert (tree1 == {}) == False
 			# We are not responsible for the following comparisons so we just call them for coverage purposes
 			tree1 < tree1
 			tree1 <= tree1
