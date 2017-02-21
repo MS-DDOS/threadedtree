@@ -110,36 +110,34 @@ class ThreadedTree(object):
 			return
 
 		current = self.root
-		directionLeft = False
-		directionRight = False
+		left = False
+		right = False
 
 		while True:
 			if current.val > value:
 				if not current.lthreaded:
 					#Add as left child
-					directionLeft = True
-					directionRight = False
+					left = True
 					break
 				else:
 					current = current.left
 			elif current.val < value:
 				if not current.rthreaded:
-					directionLeft = False
-					directionRight = True
+					right = True
 					break
 				else:
 					current = current.right
 			else:
-				break
+				break #allows equal cases to be skipped and a stub in case that behavior should change
 
-		if directionLeft:
+		if left:
 			new_node = self._new_node(value)
 			new_node.left = current.left
 			current.left = new_node
 			new_node.lthreaded = current.lthreaded
 			current.lthreaded = True
 			new_node.right = current
-		elif directionRight:
+		elif right:
 			new_node = self._new_node(value)
 			new_node.right = current.right
 			current.right = new_node
