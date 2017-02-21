@@ -22,16 +22,20 @@ class Tree_Node(object):
 		self.right = right
 
 class Instance_Count_Tree_Node(Tree_Node):
-	def __init__(self, value):
-		super(Instance_Count_Tree_Node, self).__init__(value)
+	def __init__(self, val=None, left=None, right=None):
+		super(Instance_Count_Tree_Node, self).__init__(val, left, right)
 		self.instances = 1
 
 class Threaded_Tree_Node(Tree_Node):
-	def __init__(self, value):
-		super(Threaded_Tree_Node, self).__init__(value)
-		self.rthreaded = False #indicates that the right pointer is to a predescessor, not a descendant
+	def __init__(self, val=None, left=None, right=None):
+		super(Threaded_Tree_Node, self).__init__(val, left, right)
+		self.rthreaded = False #False indicates that the pointer on that side is a thread, not an "official" node pointer
 		self.lthreaded = False
+		if self.left != None:
+			self.lthreaded = True
+		if self.right != None:
+			self.rthreaded = True
 
 class Instance_Count_Threaded_Tree_Node(Instance_Count_Tree_Node, Threaded_Tree_Node):
-	def __init__(self, value):
-		super(Instance_Count_Threaded_Tree_Node, self).__init__(value)
+	def __init__(self, val=None, left=None, right=None):
+		super(Instance_Count_Threaded_Tree_Node, self).__init__(val, left, right)

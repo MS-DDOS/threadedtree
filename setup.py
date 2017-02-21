@@ -25,5 +25,7 @@ setup(
     url="http://tylerspringer.com/",
     packages=['threadedtree',],
     license='GNU Lesser General Public License v3.0',
-    description='A carefully implemented double threaded binary search tree in pure python.'
+    description='A carefully implemented double threaded binary search tree in pure python.',
+    test_suite='nose.collector',
+    tests_require=['nose']
 	)

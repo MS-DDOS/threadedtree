@@ -1,4 +1,7 @@
 *.pyc
 .DS_Store
+.coverage
 /dist/
+/venv/
+/cover/
 /*.egg-info

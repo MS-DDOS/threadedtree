@@ -45,10 +45,15 @@ class ThreadedTree(object):
 		return str(list(self.in_order()))
 
 	def __eq__(self, other):
-		return list(self.in_order) == list(other.in_order())
+		if isinstance(other, ThreadedTree):
+			return list(self.in_order()) == list(other.in_order())
+		elif isinstance(other, list):
+			return list(self.in_order()) == other
+		else:
+			return False
 
 	def __ne__(self, other):
-		return list(self.in_order) != list(other.in_order())
+		return not self.__eq__(other)
 
 	def __lt__(self, other):
 		return NotImplemented
@@ -63,18 +68,33 @@ class ThreadedTree(object):
 		return NotImplemented
 
 	def __hash__(self):
-		return hash(tuple(list(t.in_order())))
+		return hash(tuple(list(self.in_order())))
 
 	def __add__(self, other):
-		first = list(other.in_order())
-		first.extend(list(self.in_order()))
-		return ThreadedTree(first)
+		if isinstance(other, ThreadedTree):
+			first = list(other.in_order())
+			first.extend(self.in_order())
+			return ThreadedTree(first)
+		elif isinstance(other, list):
+			first = list(other)
+			first.extend(self.in_order())
+			return ThreadedTree(first)
+		else:
+			return NotImplemented
 
 	def __sub__(self, other):
-		first = ThreadedTree(self.in_order())
-		for val in other.in_order():
-			first.remove(val)
-		return first
+		if isinstance(other, ThreadedTree):
+			first = ThreadedTree(self.in_order())
+			for val in other.in_order():
+				first.remove(val)
+			return first
+		elif isinstance(other, list):
+			first = ThreadedTree(self.in_order())
+			for val in other:
+				first.remove(val)
+			return first
+		else:
+			return NotImplemented
 
 
 	def _new_node(self, value):
@@ -109,6 +129,8 @@ class ThreadedTree(object):
 					break
 				else:
 					current = current.right
+			else:
+				break
 
 		if directionLeft:
 			new_node = self._new_node(value)
@@ -327,72 +349,3 @@ class ThreadedTree(object):
 		while node.lthreaded:
 			node = node.left
 		return node
-
-if __name__ == "__main__":
-	'''
-	import random, copy
-	upper_bound = 2000
-	samples = 1000
-	trials = 1
-	t = ThreadedTree()
-	for i in xrange(trials):
-		print "Trial",i,":",
-		test_suite = random.sample(range(upper_bound), samples)
-		print "insert ->",
-		for val in test_suite:
-			t.insert(val)
-		print "[done]","delete->",
-		vals_to_delete = copy.deepcopy(test_suite)
-		random.shuffle(vals_to_delete)
-		try:
-			for val in vals_to_delete:
-				test_suite.remove(val)
-				t.remove(val)
-				test_suite.sort()
-				assert(test_suite ==  list(t.in_order())),"Lists are not equivalent"
-		except:
-			print
-			print test_suite
-			print vals_to_delete
-			print val
-			raise
-		print "[done]"
-	
-		print "DEL root:", t.del_root
-		print "DEL both:", t.del_both
-		print "DEL none:", t.del_none
-		print "DEL rigt:", t.del_right
-		print "DEL left:", t.del_left
-		print "Called:", t.called
-	t = ThreadedTree()
-	t.insert(10)
-	t.insert(45)
-	t.insert(91)
-	t.insert(64)
-	t.insert(12)
-	print list(t.in_order())
-	print
-	selection = None
-	while selection != -1:
-		selection = raw_input("Val to delete: ")
-		print t.remove(int(selection)), list(t.in_order())
-	'''
-	import random
-	import time
-	arr = random.sample(range(10000),10000)
-	start = time.time()
-	s = ThreadedTree(arr)
-	end = time.time()
-	print "Took:", end-start
-	start = time.time()
-	s = sorted(arr)
-	end = time.time()
-	print "Took:", end - start
-	t = ThreadedTree([1,2,3])
-	s = ThreadedTree([4,5,6])
-	p = ThreadedTree([6,1])
-	x = t + s
-	print x
-	x -= p
-	print x
-	print ThreadedTree(["abc","def","cat","dog"])
