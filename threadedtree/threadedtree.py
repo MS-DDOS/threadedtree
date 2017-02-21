@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with threadedtree.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import treenodes
+import types, treenodes
 
 class ThreadedTree(object):
 	def __init__(self, iterable=[], root=None, duplicate_strategy="stack"):
@@ -28,15 +28,15 @@ class ThreadedTree(object):
 		self.root = root
 		self._len = 0
 		self.duplicate_strategy = duplicate_strategy
-		self.del_both = 0
-		self.del_none = 0
-		self.del_right = 0
-		self.del_left = 0
-		self.del_root = 0
-		self.called = 0
-		if iterable:
-			for val in iterable:
+		if isinstance(iterable, ThreadedTree):
+			for val in iterable.in_order():
 				self.insert(val)
+		else:
+			try:
+				for val in iterable:
+					self.insert(val)
+			except:
+				raise TypeError("ThreadedTree can only be initialized with another ThreadedTree, a list or a generator.")
 
 	def __len__(self):
 		return self._len
@@ -47,7 +47,7 @@ class ThreadedTree(object):
 	def __eq__(self, other):
 		if isinstance(other, ThreadedTree):
 			return list(self.in_order()) == list(other.in_order())
-		elif isinstance(other, list):
+		elif isinstance(other, types.ListType):
 			return list(self.in_order()) == other
 		else:
 			return False
@@ -75,7 +75,7 @@ class ThreadedTree(object):
 			first = list(other.in_order())
 			first.extend(self.in_order())
 			return ThreadedTree(first)
-		elif isinstance(other, list):
+		elif isinstance(other, types.ListType):
 			first = list(other)
 			first.extend(self.in_order())
 			return ThreadedTree(first)
@@ -88,7 +88,7 @@ class ThreadedTree(object):
 			for val in other.in_order():
 				first.remove(val)
 			return first
-		elif isinstance(other, list):
+		elif isinstance(other, types.ListType):
 			first = ThreadedTree(self.in_order())
 			for val in other:
 				first.remove(val)
@@ -199,7 +199,6 @@ class ThreadedTree(object):
 			return self._delete_with_right_child(current, parent)
 
 	def _delete_root(self):
-		self.del_root += 1
 		if self._len == 1:
 			self.root = None
 			return True
@@ -246,7 +245,6 @@ class ThreadedTree(object):
 		return True
 
 	def _delete_with_both_children(self, current, parent):
-		self.del_both += 1
 		on_right = False
 		if parent.right == current:
 			on_right = True
@@ -271,7 +269,6 @@ class ThreadedTree(object):
 		return True
 
 	def _delete_with_no_children(self, current):
-		self.del_none += 1
 		if current.left == None:
 			current.right.lthreaded = False
 			current.right.left = None
@@ -295,7 +292,6 @@ class ThreadedTree(object):
 				return True
 
 	def _delete_with_left_child(self, current, parent):
-		self.del_left += 1
 		far_right = current.left
 		while far_right.right != None and far_right.right != current:
 			far_right = far_right.right
@@ -314,7 +310,6 @@ class ThreadedTree(object):
 		return True
 
 	def _delete_with_right_child(self, current, parent):
-		self.del_right += 1
 		far_left = current.right
 		while far_left.left != None and far_left.left != current:
 			far_left = far_left.left

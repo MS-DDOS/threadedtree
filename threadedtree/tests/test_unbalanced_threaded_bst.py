@@ -42,8 +42,14 @@ class TestUnbalancedThreadedBST(TestCase):
 		for trial in xrange(self.trials):
 			test_suite = random.sample(self.bag, self.samples)
 			tree = threadedtree.ThreadedTree(test_suite)
+			another_tree = threadedtree.ThreadedTree(tree)
 			test_suite.sort()
 			assert test_suite == list(tree.in_order())
+			assert test_suite == list(another_tree.in_order())
+		try:
+			tree = threadedtree.ThreadedTree(1) #Try to initialize with non-iterable
+		except TypeError:
+			pass
 
 	def test_delete(self):
 		import copy
