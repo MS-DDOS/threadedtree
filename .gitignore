@@ -3,6 +3,7 @@
 .coverage
 /dist/
 /venv/
+/docs/
 /cover/*
 /threadedtree/cover/*
 /*.egg-info

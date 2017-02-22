@@ -3,10 +3,19 @@
 
 A carefully implemented double threaded binary search tree in pure python.
 
+Complete API Documentation coming soon...
+
 To run tests navigate to package root and execute:
 
 `pip install nose`
 
 `pip install coverage`
 
-`nosetests --with-coverage --cover-erase --cover-html`
+`nosetests`
+
+For coverage status you can run `nosetest` with the following options:
+
+`nosetests --with-coverage --cover-tests --cover-erase --cover-html`
+
+In this example the `--cover-html` option is invoked, so a new directory `cover/` will be generated. Open `cover/index.html` in your favorite browser for a more in depth report.
+Note that the option `--cover-tests` also performs a coverage report on the tests themselves (this is generally a good idea).

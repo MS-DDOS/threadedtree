@@ -149,15 +149,11 @@ class ThreadedTree(object):
 		"""
 	    Inserts a new node containing ``value`` into the tree.
 
-	    Parameters
-	    ----------
-	    value : object
-	        A python object that implements ``__cmp__()`` or rich comparisons, to be inserted into the tree.
+		Args:
+			value (object): A python object that implements ``__cmp__()`` or rich comparisons, to be inserted into the tree.
 
-	    Returns
-	    -------
-	    None
-
+		Returns:
+			None
 	    """
 		if not self._implements_comparisons(value):
 			return
@@ -207,18 +203,12 @@ class ThreadedTree(object):
 	def remove(self, value):
 		"""
 	    Removes a node containing ``value`` from the tree.
+		
+		Args:
+			value (object): A python object that implements ``__cmp__()`` or rich comparisons, to be removed from the tree.
 
-	    Parameters
-	    ----------
-	    value : object
-	        A python object that implements ``__cmp__()`` or rich comparisons, to be removed from the tree.
-
-	    Returns
-	    -------
-	    boolean
-	    	``True`` if remove operation was successful
-	    	``False`` if remove operation was unsuccessful, value did not exist in tree or value does not implement ``__cmp__`` or rich comparisons.
-
+		Returns:
+			boolean: operation success
 	    """
 		if not self._implements_comparisons(value):
 			return False
