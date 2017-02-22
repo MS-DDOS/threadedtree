@@ -1,3 +1,18 @@
+# This file is part of Threadedtree.
+
+# Threadedtree is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Threadedtree is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public License
+# along with threadedtree.  If not, see <http://www.gnu.org/licenses/>.
+
 from unittest import TestCase
 
 import random
@@ -17,6 +32,12 @@ class TestUnbalancedThreadedBST(TestCase):
 	@classmethod
 	def tearDown(self):
 		pass
+
+	def test_bad_root(self):
+		try:
+			tree = threadedtree.ThreadedTree(root=1)
+		except TypeError:
+			pass
 		
 	def test_insert(self):
 		for trial in xrange(self.trials):
@@ -26,6 +47,8 @@ class TestUnbalancedThreadedBST(TestCase):
 				tree.insert(sample)
 			test_suite.sort()
 			assert test_suite == list(tree)
+		# Try inserting an item that doesn't implement comparisons
+		tree.insert(lambda x: x)
 
 	def test_insert_with_duplicates(self):
 		for trial in xrange(self.trials):
@@ -67,6 +90,8 @@ class TestUnbalancedThreadedBST(TestCase):
 		# the leftmost child of the right subtree.
 		tree = threadedtree.ThreadedTree([12,25,30,22])
 		assert tree.remove(23) == False
+		# try removing an item that doesn't implement comparisons
+		tree.remove(lambda x: x)
 
 	def test_find(self):
 		for trial in xrange(self.trials):
