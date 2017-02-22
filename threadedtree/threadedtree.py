@@ -29,7 +29,7 @@ class ThreadedTree(object):
 		self._len = 0
 		self.duplicate_strategy = duplicate_strategy
 		if isinstance(iterable, ThreadedTree):
-			for val in iterable.in_order():
+			for val in iterable:
 				self.insert(val)
 		else:
 			try:
@@ -42,13 +42,13 @@ class ThreadedTree(object):
 		return self._len
 
 	def __repr__(self):
-		return str(list(self.in_order()))
+		return str(list(self))
 
 	def __eq__(self, other):
 		if isinstance(other, ThreadedTree):
-			return list(self.in_order()) == list(other.in_order())
+			return list(self) == list(other)
 		elif isinstance(other, types.ListType):
-			return list(self.in_order()) == other
+			return list(self) == other
 		else:
 			return False
 
@@ -68,33 +68,65 @@ class ThreadedTree(object):
 		return NotImplemented
 
 	def __hash__(self):
-		return hash(tuple(list(self.in_order())))
+		return hash(tuple(list(self)))
 
 	def __add__(self, other):
 		if isinstance(other, ThreadedTree):
-			first = list(other.in_order())
-			first.extend(self.in_order())
+			first = list(other)
+			first.extend(self)
 			return ThreadedTree(first)
 		elif isinstance(other, types.ListType):
 			first = list(other)
-			first.extend(self.in_order())
+			first.extend(self)
 			return ThreadedTree(first)
 		else:
 			return NotImplemented
 
 	def __sub__(self, other):
 		if isinstance(other, ThreadedTree):
-			first = ThreadedTree(self.in_order())
-			for val in other.in_order():
+			first = ThreadedTree(self)
+			for val in other:
 				first.remove(val)
 			return first
 		elif isinstance(other, types.ListType):
-			first = ThreadedTree(self.in_order())
+			first = ThreadedTree(self)
 			for val in other:
 				first.remove(val)
 			return first
 		else:
 			return NotImplemented
+
+	def __iter__(self):
+		if self._len > 0:
+			current = self.root
+			while current.lthreaded:
+				current = current.left
+			while current != None:
+				yield current.val
+				if not current.rthreaded:
+					current = current.right
+				else:
+					node = current.right
+					while node.lthreaded:
+						node = node.left
+					current = node
+
+	def __contains__(self, item):
+		current = self.root
+		while True:
+			if current.val > item:
+				if current.lthreaded:
+					current = current.left
+				else:
+					return False
+			elif current.val < item:
+				if current.rthreaded:
+					current = current.right
+				else:
+					return False
+			else:
+				return True
+
 
 
 	def _new_node(self, value):
@@ -144,22 +176,6 @@ class ThreadedTree(object):
 			new_node.rthreaded = current.rthreaded
 			current.rthreaded = True
 			new_node.left = current
-
-	def find(self, value):
-		current = self.root
-		while True:
-			if current.val > value:
-				if current.lthreaded:
-					current = current.left
-				else:
-					return False
-			elif current.val < value:
-				if current.rthreaded:
-					current = current.right
-				else:
-					return False
-			else:
-				return True
 
 	def remove(self, value):
 		if self._len > 0 and self._remove(value): #take advantage of python short circuiting
@@ -323,18 +339,3 @@ class ThreadedTree(object):
 			parent.left = current.right
 		del current
 		return True
-
-	def in_order(self):
-		if self._len > 0:
-			current = self.root
-			while current.lthreaded:
-				current = current.left
-			while current != None:
-				yield current.val
-				if not current.rthreaded:
-					current = current.right
-				else:
-					node = current.right
-					while node.lthreaded:
-						node = node.left
-					current = node

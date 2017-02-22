@@ -25,7 +25,7 @@ class TestUnbalancedThreadedBST(TestCase):
 			for sample in test_suite:
 				tree.insert(sample)
 			test_suite.sort()
-			assert test_suite == list(tree.in_order())
+			assert test_suite == list(tree)
 
 	def test_insert_with_duplicates(self):
 		for trial in xrange(self.trials):
@@ -35,7 +35,7 @@ class TestUnbalancedThreadedBST(TestCase):
 			for sample in test_suite:
 				tree.insert(sample)
 			test_suite.sort()
-			assert test_suite != list(tree.in_order())
+			assert test_suite != list(tree)
 
 	def test_create_with_iterable(self):
 		import copy
@@ -44,8 +44,8 @@ class TestUnbalancedThreadedBST(TestCase):
 			tree = threadedtree.ThreadedTree(test_suite)
 			another_tree = threadedtree.ThreadedTree(tree)
 			test_suite.sort()
-			assert test_suite == list(tree.in_order())
-			assert test_suite == list(another_tree.in_order())
+			assert test_suite == list(tree)
+			assert test_suite == list(another_tree)
 		try:
 			tree = threadedtree.ThreadedTree(1) #Try to initialize with non-iterable
 		except TypeError:
@@ -62,7 +62,7 @@ class TestUnbalancedThreadedBST(TestCase):
 			for val_to_delete in vals_to_delete:
 				test_suite.remove(val_to_delete)
 				tree.remove(val_to_delete)
-				assert test_suite == list(tree.in_order())
+				assert test_suite == list(tree)
 		# Have to explicitly test the case where the value being deleted is not in the tree and is greater than
 		# the leftmost child of the right subtree.
 		tree = threadedtree.ThreadedTree([12,25,30,22])
@@ -76,10 +76,10 @@ class TestUnbalancedThreadedBST(TestCase):
 				test_suite.remove(val)
 			tree = threadedtree.ThreadedTree(test_suite)
 			for sample in test_suite:
-				assert tree.find(sample) == True
+				assert (sample in tree) == True
 			for sample in not_included:
 				print test_suite, sample
-				assert tree.find(sample) == False
+				assert (sample in tree) == False
 
 	def test_len(self):
 		for trial in xrange(self.trials):
