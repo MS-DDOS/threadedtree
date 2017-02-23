@@ -220,32 +220,82 @@ class ThreadedTree(object):
 	def bi_iter(self):
 		class BidirectionalIterator(object):
 			def __init__(self, reference_object):
-				self.reference = reference_iterator
-				self.current_pointer = self.head()
+				self.reference = reference_object
+				self.current_pointer = None
+				self.head()
 
 			def next(self):
-				pass
+				select = self.peek()
+				self.current_pointer = self.reference._next(self.current_pointer)
+				return select
 
 			def prev(self):
+				select = self.peek()
+				self.current_pointer = self.reference._prev(self.current_pointer)
+				return select
+
+			def forward(self):
+				# This should return an iterable of some sort. Probably a generator.
+				pass
+
+			def reverse(self):
+				# This should return an iterable of some sort. Probably a generator.
 				pass
 
 			def head(self):
-				pass
+				self.current_pointer = self.reference._head(self.current_pointer)
+				return self.peek()
 
 			def tail(self):
-				pass
+				self.current_pointer = self.reference._tail(self.current_pointer)
+				return self.peek()
+
+			def peek(self):
+				select = self.reference._peek(self.current_pointer)
+				if select == None:
+					raise StopIteration
+				return self.reference._peek(self.current_pointer)
+
+		return BidirectionalIterator(self)
 
 	def _next(self, pointer):
-		pass
+		selected = False
+		current = pointer
+		while current.lthreaded:
+			current = current.left
+		if current != pointer:
+			return current
+		while current != None:
+			if current != pointer:
+				return current
+			if not current.rthreaded:
+				current = current.right
+			else:
+				node = current.right
+				while node.lthreaded:
+					node = node.left
+				current = node
 
-	def _previous(self, pointer):
+	def _prev(self, pointer):
 		pass
 
 	def _head(self, pointer):
-		pass
+		current = self.root
+		while current.lthreaded:
+			current = current.left
+		return current
 
 	def _tail(self, pointer):
-		pass
+		current = self.root
+		while current.rthreaded:
+			current = current.right
+		return current
+
+	def _peek(self, pointer):
+		try:
+			return pointer.val
+		except AttributeError:
+			return pointer
 
 	def _implements_comparisons(self, value):
 		"""Private method that determines if value implements either __cmp__ or both __lt__ and __gt__"""
