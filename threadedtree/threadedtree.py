@@ -21,22 +21,22 @@ class ThreadedTree(object):
 	"""A carefully implemented unbalanced double threaded binary search tree. Threaded binary search trees are optimized for in-order (ascending or descending) traversal and use no stack or recursion to perform its functions."""
 	def __init__(self, iterable=[], duplicate_strategy="none", root=None):
 		"""
-	    Creates and empty unbalanced double threaded binary search tree.
+		Creates and empty unbalanced double threaded binary search tree.
 
 	    A tree can be intialized using a valid python iterable object as a parameter to the constructor.
 
 	    Args:
-	    	iterable(collections.Iterable): A python iterable used to initialize an empty tree. Items are added to tree in order of iteration (i.e a sorted list will create a tree that is the equivalent of a doubly linked list).
-	    	duplicate_strategy(str):
-	        	``none`` - do not allow duplicates.
-	        	``stack`` - aggregate duplicate keys using an integer. (not yet implemented)
+			iterable(collections.Iterable): A python iterable used to initialize an empty tree. Items are added to tree in order of iteration (i.e a sorted list will create a tree that is the equivalent of a doubly linked list).
+			duplicate_strategy(str):
+				``none`` - do not allow duplicates.
+				``stack`` - aggregate duplicate keys using an integer. (not yet implemented)
 				``duplicate`` - allow duplicate nodes in tree. (not yet implemented)
 			root(Threaded_Tree_Node): A Threaded_Tree_Node to assign to ``root``. Could be useful if you assembled a tree manually and wanted to mutate it via the tree interface.
 
-	    Returns:
-	    	None
+		Returns:
+			None
 
-	    """
+		"""
 		if not isinstance(root, treenodes.Threaded_Tree_Node) and root != None:
 			raise TypeError("You can only initialize the root of a ThreadedTree with an object with a base class of Threaded_Tree_Node, or None.")
 		self.root = root
@@ -143,14 +143,14 @@ class ThreadedTree(object):
 
 	def insert(self, value):
 		"""
-	    Inserts a new node containing ``value`` into the tree.
+		Inserts a new node containing ``value`` into the tree.
 
 		Args:
 			value (object): A python object that implements ``__cmp__()`` or rich comparisons, to be inserted into the tree.
 
 		Returns:
 			None
-	    """
+		"""
 		if not self._implements_comparisons(value):
 			return
 
@@ -198,14 +198,14 @@ class ThreadedTree(object):
 
 	def remove(self, value):
 		"""
-	    Removes a node containing ``value`` from the tree.
+		Removes a node containing ``value`` from the tree.
 		
 		Args:
 			value (object): A python object that implements ``__cmp__()`` or rich comparisons, to be removed from the tree.
 
 		Returns:
 			boolean: operation success
-	    """
+		"""
 		if not self._implements_comparisons(value):
 			return False
 		if self._len > 0 and self._remove(value): #take advantage of python short circuiting
