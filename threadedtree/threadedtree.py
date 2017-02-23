@@ -217,6 +217,36 @@ class ThreadedTree(object):
 			return True
 		return False
 
+	def bi_iter(self):
+		class BidirectionalIterator(object):
+			def __init__(self, reference_object):
+				self.reference = reference_iterator
+				self.current_pointer = self.head()
+
+			def next(self):
+				pass
+
+			def prev(self):
+				pass
+
+			def head(self):
+				pass
+
+			def tail(self):
+				pass
+
+	def _next(self, pointer):
+		pass
+
+	def _previous(self, pointer):
+		pass
+
+	def _head(self, pointer):
+		pass
+
+	def _tail(self, pointer):
+		pass
+
 	def _implements_comparisons(self, value):
 		"""Private method that determines if value implements either __cmp__ or both __lt__ and __gt__"""
 		if not hasattr(value, "__cmp__") and not (hasattr(value, "__lt__") or hasattr(value, "__gt__")):
