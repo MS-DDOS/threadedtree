@@ -218,16 +218,41 @@ class ThreadedTree(object):
 			def __init__(self, reference_object):
 				self.reference = reference_object
 				self.current_pointer = None
+				self.at_head = True
+				self.at_tail = False
+				self.forward_dir = True
 				self.head()
 
 			def next(self):
+				if self.at_tail:
+					self.forward_dir = False
+					return None
+				if self.forward_dir == False:
+					self.current_pointer = self.reference._next(self.current_pointer)
 				select = self.peek()
-				self.current_pointer = self.reference._next(self.current_pointer)
+				self.at_head = False
+				if self.current_pointer == self.reference._tail():
+					self.at_tail = True
+				else:
+					self.current_pointer = self.reference._next(self.current_pointer)
+				self.forward_dir = True
 				return select
 
 			def prev(self):
+				if self.at_head:
+					self.forward_dir = True
+					return None
+				if self.forward_dir == True:
+					if not self.at_tail:
+						self.current_pointer = self.reference._prev(self.current_pointer)
+					self.current_pointer = self.reference._prev(self.current_pointer)
 				select = self.peek()
-				self.current_pointer = self.reference._prev(self.current_pointer)
+				self.at_tail = False
+				if self.current_pointer == self.reference._head():
+					self.at_head = True
+				else:
+					self.current_pointer = self.reference._prev(self.current_pointer)
+				self.forward_dir = False
 				return select
 
 			def forward(self):
@@ -239,11 +264,11 @@ class ThreadedTree(object):
 				pass
 
 			def head(self):
-				self.current_pointer = self.reference._head(self.current_pointer)
+				self.current_pointer = self.reference._head()
 				return self.peek()
 
 			def tail(self):
-				self.current_pointer = self.reference._tail(self.current_pointer)
+				self.current_pointer = self.reference._tail()
 				return self.peek()
 
 			def peek(self):
@@ -274,13 +299,13 @@ class ThreadedTree(object):
 				return current
 			current = current.left
 
-	def _head(self, pointer):
+	def _head(self):
 		current = self.root
 		while current.lthreaded:
 			current = current.left
 		return current
 
-	def _tail(self, pointer):
+	def _tail(self):
 		current = self.root
 		while current.rthreaded:
 			current = current.right
