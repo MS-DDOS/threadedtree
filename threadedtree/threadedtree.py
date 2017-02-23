@@ -25,24 +25,20 @@ class ThreadedTree(object):
 
 	    A tree can be intialized using a valid python iterable object as a parameter to the constructor.
 
-	    Parameters
-	    ----------
-	    iterable : collections.Iterable
-	        A python iterable used to initialize an empty tree. Items are added to tree in order of iteration (i.e a sorted list will create a tree that is the equivalent of a doubly linked list).
-	    duplicate_strategy : str
-	        ``none`` - do not allow duplicates.
-	        ``stack`` - aggregate duplicate keys using an integer. (not yet implemented)
-			``duplicate`` - allow duplicate nodes in tree. (not yet implemented)
-		root : Threaded_Tree_Node
-			A Threaded_Tree_Node to assign to ``root``. Could be useful if you assembled a tree manually and wanted to mutate it via the tree interface.
+	    Args:
+	    	iterable(collections.Iterable): A python iterable used to initialize an empty tree. Items are added to tree in order of iteration (i.e a sorted list will create a tree that is the equivalent of a doubly linked list).
+	    	duplicate_strategy(str):
+	        	``none`` - do not allow duplicates.
+	        	``stack`` - aggregate duplicate keys using an integer. (not yet implemented)
+				``duplicate`` - allow duplicate nodes in tree. (not yet implemented)
+			root(Threaded_Tree_Node): A Threaded_Tree_Node to assign to ``root``. Could be useful if you assembled a tree manually and wanted to mutate it via the tree interface.
 
-	    Returns
-	    -------
-	    None
+	    Returns:
+	    	None
 
 	    """
-		if not isinstance(root, treenodes.Tree_Node) and root != None:
-			raise TypeError("You can only initialize the root of a ThreadedTree with an object with a base class of Tree_Node, or None.")
+		if not isinstance(root, treenodes.Threaded_Tree_Node) and root != None:
+			raise TypeError("You can only initialize the root of a ThreadedTree with an object with a base class of Threaded_Tree_Node, or None.")
 		self.root = root
 		self._len = 0
 		self.duplicate_strategy = duplicate_strategy
@@ -259,12 +255,7 @@ class ThreadedTree(object):
 		return BidirectionalIterator(self)
 
 	def _next(self, pointer):
-		selected = False
 		current = pointer
-		while current.lthreaded:
-			current = current.left
-		if current != pointer:
-			return current
 		while current != None:
 			if current != pointer:
 				return current
@@ -277,7 +268,11 @@ class ThreadedTree(object):
 				current = node
 
 	def _prev(self, pointer):
-		pass
+		current = pointer
+		while current != None:
+			if current != pointer:
+				return current
+			current = current.left
 
 	def _head(self, pointer):
 		current = self.root
