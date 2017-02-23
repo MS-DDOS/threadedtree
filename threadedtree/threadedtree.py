@@ -218,50 +218,23 @@ class ThreadedTree(object):
 			def __init__(self, reference_object):
 				self.reference = reference_object
 				self.current_pointer = None
-				self.at_head = True
-				self.at_tail = False
-				self.forward_dir = True
 				self.head()
 
 			def next(self):
-				if self.at_tail:
-					self.forward_dir = False
+				n = self.reference._next(self.current_pointer)
+				if n == None:
 					return None
-				if self.forward_dir == False:
-					self.current_pointer = self.reference._next(self.current_pointer)
-				select = self.peek()
-				self.at_head = False
-				if self.current_pointer == self.reference._tail():
-					self.at_tail = True
 				else:
-					self.current_pointer = self.reference._next(self.current_pointer)
-				self.forward_dir = True
-				return select
+					self.current_pointer = n
+				return self.peek()
 
 			def prev(self):
-				if self.at_head:
-					self.forward_dir = True
+				p = self.reference._prev(self.current_pointer)
+				if p == None:
 					return None
-				if self.forward_dir == True:
-					if not self.at_tail:
-						self.current_pointer = self.reference._prev(self.current_pointer)
-					self.current_pointer = self.reference._prev(self.current_pointer)
-				select = self.peek()
-				self.at_tail = False
-				if self.current_pointer == self.reference._head():
-					self.at_head = True
 				else:
-					self.current_pointer = self.reference._prev(self.current_pointer)
-				self.forward_dir = False
-				return select
-
-			def forward(self):
-				# This should return an iterable of some sort. Probably a generator.
-				pass
-
-			def reverse(self):
-				# This should return an iterable of some sort. Probably a generator.
-				pass
+					self.current_pointer = p
+				return self.peek()
 
 			def head(self):
 				self.current_pointer = self.reference._head()
@@ -278,6 +251,21 @@ class ThreadedTree(object):
 				return self.reference._peek(self.current_pointer)
 
 		return BidirectionalIterator(self)
+
+	def reverse(self):
+		if self._len > 0:
+			current = self.root
+			while current.rthreaded:
+				current = current.right
+			while current != None:
+				yield current.val
+				if not current.lthreaded:
+					current = current.left
+				else:
+					node = current.left
+					while node.rthreaded:
+						node = node.right
+					current = node
 
 	def _next(self, pointer):
 		current = pointer
@@ -297,7 +285,13 @@ class ThreadedTree(object):
 		while current != None:
 			if current != pointer:
 				return current
-			current = current.left
+			if not current.lthreaded:
+				current = current.left
+			else:
+				node = current.left
+				while node.rthreaded:
+					node = node.right
+				current = node
 
 	def _head(self):
 		current = self.root
