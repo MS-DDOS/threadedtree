@@ -214,42 +214,6 @@ class ThreadedTree(object):
 		return False
 
 	def bi_iter(self):
-		class BidirectionalIterator(object):
-			def __init__(self, reference_object):
-				self.reference = reference_object
-				self.current_pointer = None
-				self.head()
-
-			def next(self):
-				n = self.reference._next(self.current_pointer)
-				if n == None:
-					return None
-				else:
-					self.current_pointer = n
-				return self.peek()
-
-			def prev(self):
-				p = self.reference._prev(self.current_pointer)
-				if p == None:
-					return None
-				else:
-					self.current_pointer = p
-				return self.peek()
-
-			def head(self):
-				self.current_pointer = self.reference._head()
-				return self.peek()
-
-			def tail(self):
-				self.current_pointer = self.reference._tail()
-				return self.peek()
-
-			def peek(self):
-				select = self.reference._peek(self.current_pointer)
-				if select == None:
-					raise StopIteration
-				return self.reference._peek(self.current_pointer)
-
 		return BidirectionalIterator(self)
 
 	def reverse(self):
@@ -483,3 +447,49 @@ class ThreadedTree(object):
 			parent.left = current.right
 		del current
 		return True
+
+class BidirectionalIterator(object):
+	def __init__(self, reference_object):
+		self.reference = reference_object
+		self.current_pointer = None
+		self.head()
+
+	def next(self):
+		n = self.reference._next(self.current_pointer)
+		if n == None:
+			return None
+		else:
+			self.current_pointer = n
+		return self.peek()
+
+	def prev(self):
+		p = self.reference._prev(self.current_pointer)
+		if p == None:
+			return None
+		else:
+			self.current_pointer = p
+		return self.peek()
+
+	def has_next(self):
+		if self.reference._next(self.current_pointer) == None:
+			return False
+		return True
+
+	def has_prev(self):
+		if self.reference._prev(self.current_pointer) == None:
+			return False
+		return True
+
+	def head(self):
+		self.current_pointer = self.reference._head()
+		return self.peek()
+
+	def tail(self):
+		self.current_pointer = self.reference._tail()
+		return self.peek()
+
+	def peek(self):
+		select = self.reference._peek(self.current_pointer)
+		if select == None:
+			raise StopIteration
+		return self.reference._peek(self.current_pointer)
