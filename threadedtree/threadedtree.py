@@ -15,35 +15,31 @@
 
 """This module contains an unbalanced double threaded binary search tree which is optimized for in-order traversal and uses no stack or recursion to perform its functions."""
 
-import types, treenodes
+import types, treenodes, bidirectionaliterator
 
 class ThreadedTree(object):
 	"""A carefully implemented unbalanced double threaded binary search tree. Threaded binary search trees are optimized for in-order (ascending or descending) traversal and use no stack or recursion to perform its functions."""
 	def __init__(self, iterable=[], duplicate_strategy="none", root=None):
 		"""
-	    Creates and empty unbalanced double threaded binary search tree.
+		Creates and empty unbalanced double threaded binary search tree.
 
 	    A tree can be intialized using a valid python iterable object as a parameter to the constructor.
 
-	    Parameters
-	    ----------
-	    iterable : collections.Iterable
-	        A python iterable used to initialize an empty tree. Items are added to tree in order of iteration (i.e a sorted list will create a tree that is the equivalent of a doubly linked list).
-	    duplicate_strategy : str
-	        ``none`` - do not allow duplicates.
-	        ``stack`` - aggregate duplicate keys using an integer. (not yet implemented)
-			``duplicate`` - allow duplicate nodes in tree. (not yet implemented)
-		root : Threaded_Tree_Node
-			A Threaded_Tree_Node to assign to ``root``. Could be useful if you assembled a tree manually and wanted to mutate it via the tree interface.
+	    Args:
+			iterable(collections.Iterable): A python iterable used to initialize an empty tree. Items are added to tree in order of iteration (i.e a sorted list will create a tree that is the equivalent of a doubly linked list).
+			duplicate_strategy(str):
+				``none`` - do not allow duplicates.
+				``stack`` - aggregate duplicate keys using an integer. (not yet implemented)
+				``duplicate`` - allow duplicate nodes in tree. (not yet implemented)
+			root(Threaded_Tree_Node): A Threaded_Tree_Node to assign to ``root``. Could be useful if you assembled a tree manually and wanted to mutate it via the tree interface.
 
-	    Returns
-	    -------
-	    None
+		Returns:
+			None
 
-	    """
-		if not isinstance(root, treenodes.Tree_Node) and root != None:
-			raise TypeError("You can only initialize the root of a ThreadedTree with an object with a base class of Tree_Node, or None.")
-		self.root = root
+		"""
+		if not isinstance(root, treenodes.Threaded_Tree_Node) and root != None:
+			raise TypeError("You can only initialize the root of a ThreadedTree with an object with a base class of Threaded_Tree_Node, or None.")
+		self.root = self.head = self.tail = root
 		self._len = 0
 		self.duplicate_strategy = duplicate_strategy
 		if isinstance(iterable, ThreadedTree):
@@ -147,14 +143,14 @@ class ThreadedTree(object):
 
 	def insert(self, value):
 		"""
-	    Inserts a new node containing ``value`` into the tree.
+		Inserts a new node containing ``value`` into the tree.
 
 		Args:
 			value (object): A python object that implements ``__cmp__()`` or rich comparisons, to be inserted into the tree.
 
 		Returns:
 			None
-	    """
+		"""
 		if not self._implements_comparisons(value):
 			return
 
@@ -162,6 +158,7 @@ class ThreadedTree(object):
 
 		if self.root == None:
 			self.root = self._new_node(value)
+			self.head = self.tail = self.root
 			return
 
 		current = self.root
@@ -200,22 +197,102 @@ class ThreadedTree(object):
 			current.rthreaded = True
 			new_node.left = current
 
+		try:
+			if new_node.left == None:
+				self.head = new_node
+			elif new_node.right == None:
+				self.tail = new_node
+		except UnboundLocalError:
+			pass
+
 	def remove(self, value):
 		"""
-	    Removes a node containing ``value`` from the tree.
+		Removes a node containing ``value`` from the tree.
 		
 		Args:
 			value (object): A python object that implements ``__cmp__()`` or rich comparisons, to be removed from the tree.
 
 		Returns:
 			boolean: operation success
-	    """
+		"""
 		if not self._implements_comparisons(value):
 			return False
 		if self._len > 0 and self._remove(value): #take advantage of python short circuiting
 			self._len -= 1
 			return True
 		return False
+
+	def bi_iter(self):
+		"""
+		Returns a BidrectionalIterator to the tree, allowing a user to step through the tree in either the forward or backward direction.
+
+		Returns:
+			BidirectionalIterator: iterator allowing forward or backward traversal of the underlying tree.
+		""" 
+		return bidirectionaliterator.BidirectionalIterator(self)
+
+	def reverse(self):
+		"""
+		Returns a generator that yields values from the tree in reverse order, from the tail to the head of the tree.
+
+		Returns:
+			Generator : yields values from the tree in reverse order.
+		"""
+		if self._len > 0:
+			current = self.root
+			while current.rthreaded:
+				current = current.right
+			while current != None:
+				yield current.val
+				if not current.lthreaded:
+					current = current.left
+				else:
+					node = current.left
+					while node.rthreaded:
+						node = node.right
+					current = node
+
+	def _next(self, pointer):
+		""" Private method that returns the next value in the tree, in order, given a random pointer. The time complexity of this method is O(n)."""
+		current = pointer
+		while current != None:
+			if current != pointer:  # Pretty likely this is Theta(1)
+				return current
+			if not current.rthreaded:
+				current = current.right
+			else:
+				node = current.right
+				while node.lthreaded:
+					node = node.left
+				current = node
+
+	def _prev(self, pointer):
+		""" Private method that returns the previous value in the tree, in order, given a random pointer. The time complexity of this method is O(n)."""
+		current = pointer
+		while current != None:
+			if current != pointer: # Pretty likely this is Theta(1)
+				return current
+			if not current.lthreaded:
+				current = current.left
+			else:
+				node = current.left
+				while node.rthreaded:
+					node = node.right
+				current = node
+
+	def _head(self):
+		""" Private method that returns the head of the tree in constant time."""
+		return self.head
+
+	def _tail(self):
+		""" Private method that returns the tail of the tree in constant time."""
+		return self.tail
+
+	def _peek(self, pointer):
+		try:
+			return pointer.val
+		except:
+			return pointer
 
 	def _implements_comparisons(self, value):
 		"""Private method that determines if value implements either __cmp__ or both __lt__ and __gt__"""

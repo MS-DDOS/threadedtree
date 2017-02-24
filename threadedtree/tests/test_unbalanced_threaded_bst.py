@@ -124,6 +124,16 @@ class TestUnbalancedThreadedBST(TestCase):
 			test_suite.sort()
 			assert str(test_suite) == str(tree)
 
+	def test_reverse(self):
+		for trial in xrange(self.trials):
+			test_suite = random.sample(self.bag, self.small_samples)
+			tree = threadedtree.ThreadedTree(test_suite)
+			test_suite.sort()
+			idx = len(test_suite)-1
+			for val in tree.reverse():
+				assert test_suite[idx] == val
+				idx -= 1
+
 	def test_add(self):
 		for trial in xrange(5):
 			test_suite_1 = random.sample(self.bag, self.small_samples)
