@@ -258,12 +258,14 @@ class ThreadedTree(object):
 				current = node
 
 	def _head(self):
+		# TODO: This should be a O(1) operation. It is currently O(n)
 		current = self.root
 		while current.lthreaded:
 			current = current.left
 		return current
 
 	def _tail(self):
+		# TODO: This should be a O(1) operation. It is currently O(n)
 		current = self.root
 		while current.rthreaded:
 			current = current.right
@@ -453,6 +455,9 @@ class BidirectionalIterator(object):
 		self.reference = reference_object
 		self.current_pointer = None
 		self.head()
+
+	def __repr__(self):
+		return str(self.peek())
 
 	def next(self):
 		n = self.reference._next(self.current_pointer)
