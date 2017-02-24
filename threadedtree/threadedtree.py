@@ -456,6 +456,9 @@ class BidirectionalIterator(object):
 		self.current_pointer = None
 		self.head()
 
+	def __len__(self):
+		return len(self.reference)
+
 	def __repr__(self):
 		return str(self.peek())
 
