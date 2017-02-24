@@ -264,20 +264,10 @@ class ThreadedTree(object):
 				current = node
 
 	def _head(self):
-		# TODO: This should be a O(1) operation. It is currently O(n)
-		current = self.root
-		while current.lthreaded:
-			current = current.left
-		assert self.head == current
-		return current
+		return self.head
 
 	def _tail(self):
-		# TODO: This should be a O(1) operation. It is currently O(n)
-		current = self.root
-		while current.rthreaded:
-			current = current.right
-		assert self.tail == current
-		return current
+		return self.tail
 
 	def _peek(self, pointer):
 		try:
