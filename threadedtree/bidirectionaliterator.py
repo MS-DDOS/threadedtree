@@ -1,3 +1,18 @@
+# This file is part of Threadedtree.
+
+# Threadedtree is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Threadedtree is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public License
+# along with threadedtree.  If not, see <http://www.gnu.org/licenses/>.
+
 class BidirectionalIterator(object):
 	"""A generic bi-directional itertaor to any object that implements the BidirectionalIterator interface. A BidirectionalIterator does have its own state, but does not copy the data or mutate
 	the state of the underlying object. In essense it is simply a wrapper with a pointer to a given element in the reference object. The next() and prev() methods
