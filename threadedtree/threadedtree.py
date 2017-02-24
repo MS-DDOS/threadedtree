@@ -15,7 +15,7 @@
 
 """This module contains an unbalanced double threaded binary search tree which is optimized for in-order traversal and uses no stack or recursion to perform its functions."""
 
-import types, treenodes
+import types, treenodes, bidirectionaliterator
 
 class ThreadedTree(object):
 	"""A carefully implemented unbalanced double threaded binary search tree. Threaded binary search trees are optimized for in-order (ascending or descending) traversal and use no stack or recursion to perform its functions."""
@@ -197,10 +197,13 @@ class ThreadedTree(object):
 			current.rthreaded = True
 			new_node.left = current
 
-		if new_node.left == None:
-			self.head = new_node
-		elif new_node.right == None:
-			self.tail = new_node
+		try:
+			if new_node.left == None:
+				self.head = new_node
+			elif new_node.right == None:
+				self.tail = new_node
+		except UnboundLocalError:
+			pass
 
 	def remove(self, value):
 		"""
@@ -220,9 +223,21 @@ class ThreadedTree(object):
 		return False
 
 	def bi_iter(self):
-		return BidirectionalIterator(self)
+		"""
+		Returns a BidrectionalIterator to the tree, allowing a user to step through the tree in either the forward or backward direction.
+
+		Returns:
+			BidirectionalIterator: iterator allowing forward or backward traversal of the underlying tree.
+		""" 
+		return bidirectionaliterator.BidirectionalIterator(self)
 
 	def reverse(self):
+		"""
+		Returns a generator that yields values from the tree in reverse order, from the tail to the head of the tree.
+
+		Returns:
+			Generator : yields values from the tree in reverse order.
+		"""
 		if self._len > 0:
 			current = self.root
 			while current.rthreaded:
@@ -238,9 +253,10 @@ class ThreadedTree(object):
 					current = node
 
 	def _next(self, pointer):
+		""" Private method that returns the next value in the tree, in order, given a random pointer. The time complexity of this method is O(n)."""
 		current = pointer
 		while current != None:
-			if current != pointer:
+			if current != pointer:  # Pretty likely this is Theta(1)
 				return current
 			if not current.rthreaded:
 				current = current.right
@@ -251,9 +267,10 @@ class ThreadedTree(object):
 				current = node
 
 	def _prev(self, pointer):
+		""" Private method that returns the previous value in the tree, in order, given a random pointer. The time complexity of this method is O(n)."""
 		current = pointer
 		while current != None:
-			if current != pointer:
+			if current != pointer: # Pretty likely this is Theta(1)
 				return current
 			if not current.lthreaded:
 				current = current.left
@@ -264,15 +281,17 @@ class ThreadedTree(object):
 				current = node
 
 	def _head(self):
+		""" Private method that returns the head of the tree in constant time."""
 		return self.head
 
 	def _tail(self):
+		""" Private method that returns the tail of the tree in constant time."""
 		return self.tail
 
 	def _peek(self, pointer):
 		try:
 			return pointer.val
-		except AttributeError:
+		except:
 			return pointer
 
 	def _implements_comparisons(self, value):
@@ -447,55 +466,3 @@ class ThreadedTree(object):
 			parent.left = current.right
 		del current
 		return True
-
-class BidirectionalIterator(object):
-	def __init__(self, reference_object):
-		self.reference = reference_object
-		self.current_pointer = None
-		self.head()
-
-	def __len__(self):
-		return len(self.reference)
-
-	def __repr__(self):
-		return str(self.peek())
-
-	def next(self):
-		n = self.reference._next(self.current_pointer)
-		if n == None:
-			return None
-		else:
-			self.current_pointer = n
-		return self.peek()
-
-	def prev(self):
-		p = self.reference._prev(self.current_pointer)
-		if p == None:
-			return None
-		else:
-			self.current_pointer = p
-		return self.peek()
-
-	def has_next(self):
-		if self.reference._next(self.current_pointer) == None:
-			return False
-		return True
-
-	def has_prev(self):
-		if self.reference._prev(self.current_pointer) == None:
-			return False
-		return True
-
-	def head(self):
-		self.current_pointer = self.reference._head()
-		return self.peek()
-
-	def tail(self):
-		self.current_pointer = self.reference._tail()
-		return self.peek()
-
-	def peek(self):
-		select = self.reference._peek(self.current_pointer)
-		if select == None:
-			raise StopIteration
-		return self.reference._peek(self.current_pointer)
