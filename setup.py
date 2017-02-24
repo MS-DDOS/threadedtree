@@ -20,7 +20,7 @@ from setuptools import find_packages
 
 setup(
     name='ThreadedTree',
-    version='1.0dev',
+    version='1.0.dev1',
     author="M Tyler Springer",
     author_email="mspringer@smu.edu",
     url="http://tylerspringer.com/",
