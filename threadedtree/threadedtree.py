@@ -39,7 +39,7 @@ class ThreadedTree(object):
 		"""
 		if not isinstance(root, treenodes.Threaded_Tree_Node) and root != None:
 			raise TypeError("You can only initialize the root of a ThreadedTree with an object with a base class of Threaded_Tree_Node, or None.")
-		self.root = root
+		self.root = self.head = self.tail = root
 		self._len = 0
 		self.duplicate_strategy = duplicate_strategy
 		if isinstance(iterable, ThreadedTree):
@@ -158,6 +158,7 @@ class ThreadedTree(object):
 
 		if self.root == None:
 			self.root = self._new_node(value)
+			self.head = self.tail = self.root
 			return
 
 		current = self.root
@@ -195,6 +196,11 @@ class ThreadedTree(object):
 			new_node.rthreaded = current.rthreaded
 			current.rthreaded = True
 			new_node.left = current
+
+		if new_node.left == None:
+			self.head = new_node
+		elif new_node.right == None:
+			self.tail = new_node
 
 	def remove(self, value):
 		"""
@@ -262,6 +268,7 @@ class ThreadedTree(object):
 		current = self.root
 		while current.lthreaded:
 			current = current.left
+		assert self.head == current
 		return current
 
 	def _tail(self):
@@ -269,6 +276,7 @@ class ThreadedTree(object):
 		current = self.root
 		while current.rthreaded:
 			current = current.right
+		assert self.tail == current
 		return current
 
 	def _peek(self, pointer):
