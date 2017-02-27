@@ -93,6 +93,19 @@ class TestUnbalancedThreadedBST(TestCase):
 		# try removing an item that doesn't implement comparisons
 		tree.remove(lambda x: x)
 
+	def test_head_and_tail(self):
+		import copy
+		for trial in xrange(self.trials):
+			test_suite = random.sample(self.bag, self.samples)
+			vals_to_delete = copy.deepcopy(test_suite)
+			random.shuffle(vals_to_delete)
+			tree = threadedtree.ThreadedTree(test_suite)
+			for val in vals_to_delete:
+				vals_to_delete.remove(val)
+				tree.remove(val)
+				assert tree.head.val == min(vals_to_delete)
+				assert tree.tail.val == max(vals_to_delete)
+
 	def test_find(self):
 		for trial in xrange(self.trials):
 			test_suite = random.sample(self.bag, self.samples)
