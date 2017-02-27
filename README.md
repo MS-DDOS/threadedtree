@@ -5,7 +5,7 @@ A carefully implemented double threaded binary search tree in pure python.
 
 Package is now in a stable state and is safe to inherit from to create variations such as a threaded AVL tree or a threaded red/black tree. Both of which are on the TODO list.
 
-Complete API Documentation coming soon...
+Complete API Documentation coming soon....
 
 To run tests navigate to package root and execute:
 
