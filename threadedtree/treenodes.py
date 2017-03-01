@@ -31,6 +31,7 @@ class Threaded_Tree_Node(Tree_Node):
 	"""Extends ``Tree_Node`` by adding two boolean properties ``rthreaded`` and ``lthreaded``. ``True`` means a link is part of the tree structure, ``False`` means a link is a thread to a predecessor or successor."""
 	def __init__(self, val=None, left=None, right=None):
 		super(Threaded_Tree_Node, self).__init__(val, left, right)
+		self.parent = None
 		self.rthreaded = False #False indicates that the pointer on that side is a thread, not an "official" node pointer
 		self.lthreaded = False
 		if self.left != None:
@@ -42,3 +43,14 @@ class Instance_Count_Threaded_Tree_Node(Instance_Count_Tree_Node, Threaded_Tree_
 	"""Extends ``Tree_Node`` by adding the properties of both ``Threaded_Tree_node`` and ``Instance_Count_Tree_Node.``"""
 	def __init__(self, val=None, left=None, right=None):
 		super(Instance_Count_Threaded_Tree_Node, self).__init__(val, left, right)
+
+class Threaded_Red_Black_Tree_Node(Threaded_Tree_Node):
+	def __init__(self, val=None, left=None, right=None):
+		super(Threaded_Red_Black_Tree_Node, self).__init__(val, left, right)
+		self.red = True # False if node is black
+		print self.val
+
+class Threaded_AVL_Tree_Node(Threaded_Tree_Node):
+	def __init__(self, val=None, left=None, right=None):
+		super(Threaded_AVL_Tree_Node, self).__init__(val, left, right)
+		self.balance = 0 # balance factor
