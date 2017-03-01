@@ -23,9 +23,65 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 
 	def insert(self, value):
 		super(ThreadedRedBlackTree, self).insert(value)
-		self.balance(self.access)
+		self._balance_insert(self.access)
 
-	def balance(self, node):
+	def remove(self, value):
+		if not self._implements_comparisons(value):
+			return False
+		if self._len > 0 and self._remove(value): #take advantage of python short circuiting
+			self._balance_remove(self.access)
+			self._len -= 1
+			return True
+		return False
+
+	def _remove(self, value):
+		"""Private method that performs actual removal of value."""
+		if value == self.root.val:
+			self.access = None
+			return self._delete_root()
+
+		current = parent = self.root
+		while True:
+			if current.val > value:
+				if current.lthreaded:
+					parent = current
+					current = current.left
+				else:
+					return False
+			elif current.val < value:
+				if current.rthreaded:
+					parent = current
+					current = current.right
+				else:
+					return False
+			else:
+				break
+
+		if current.lthreaded == False and current.rthreaded == False:
+			if self._delete_with_no_children(current):
+				if self.access.red:
+					self.access.red = False
+				else:
+					self._balance_del(parent)
+				return True
+			return False
+		elif current.lthreaded == True and current.rthreaded == True:
+			return self._delete_with_both_children(current, parent)
+		elif current.lthreaded:
+			if self._delete_with_left_child(current, parent):
+				self.access.parent = parent
+				self.access.red = False
+		else:
+			if self._delete_with_right_child(current, parent):
+				self.access.parent = parent
+				self.access.red = False
+				return True
+			return False
+
+	def _balance_del(self):
+		pass
+
+	def _balance_insert(self, node):
 		while node != self.root and node.parent.red:
 			if node.parent == node.parent.parent.left:
 				temp = node.parent.parent.right
