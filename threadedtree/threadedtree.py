@@ -42,15 +42,16 @@ class ThreadedTree(object):
 		self.root = self.head = self.tail = root
 		self._len = 0
 		self.duplicate_strategy = duplicate_strategy
+		self.access = None # This is a special attribute that allows derived classes to access the node that has just been inserted or about to be deleted
 		if isinstance(iterable, ThreadedTree):
 			for val in iterable:
 				self.insert(val)
 		else:
-			try: # This is more broad than specifically testing for collections.Iterable
-				for val in iterable:
-					self.insert(val)
-			except:
-				raise TypeError("ThreadedTree can only be initialized with another ThreadedTree or other Python iterable.")
+			#try: # This is more broad than specifically testing for collections.Iterable
+			for val in iterable:
+				self.insert(val)
+			#except AttributeError:
+			#	raise TypeError("ThreadedTree can only be initialized with another ThreadedTree or other Python iterable.")
 
 	def __len__(self):
 		return self._len
@@ -158,7 +159,7 @@ class ThreadedTree(object):
 
 		if self.root == None:
 			self.root = self._new_node(value)
-			self.head = self.tail = self.root
+			self.head = self.tail = self.access = self.root
 			return
 
 		current = self.root
@@ -184,6 +185,7 @@ class ThreadedTree(object):
 
 		if left:
 			new_node = self._new_node(value)
+			new_node.parent = current
 			new_node.left = current.left
 			current.left = new_node
 			new_node.lthreaded = current.lthreaded
@@ -191,6 +193,7 @@ class ThreadedTree(object):
 			new_node.right = current
 		elif right:
 			new_node = self._new_node(value)
+			new_node.parent = current
 			new_node.right = current.right
 			current.right = new_node
 			new_node.rthreaded = current.rthreaded
@@ -202,8 +205,9 @@ class ThreadedTree(object):
 				self.head = new_node
 			elif new_node.right == None:
 				self.tail = new_node
+			self.access = new_node
 		except UnboundLocalError:
-			pass
+			self.access = None
 
 	def remove(self, value):
 		"""
