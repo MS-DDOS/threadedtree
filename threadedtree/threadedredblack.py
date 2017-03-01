@@ -78,6 +78,7 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 		temp.left = node
 		temp.lthreaded = True
 		node.parent = temp
+		return temp
 
 	def rotate_right(self, node):
 		temp = node.left
@@ -100,8 +101,8 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 		temp.right = node
 		temp.rthreaded = True
 		node.parent = temp
+		return temp
 
 	def _new_node(self, value):
 		"""Private method that returns a new tree node corresponding to the selected duplicate strategy"""
 		return treenodes.Threaded_Red_Black_Tree_Node(value)
-

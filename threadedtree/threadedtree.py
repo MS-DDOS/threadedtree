@@ -160,7 +160,7 @@ class ThreadedTree(object):
 		if self.root == None:
 			self.root = self._new_node(value)
 			self.head = self.tail = self.access = self.root
-			return
+			return self.root
 
 		current = self.root
 		left = False
@@ -209,10 +209,12 @@ class ThreadedTree(object):
 		except UnboundLocalError:
 			self.access = None
 
+		return new_node
+
 	def remove(self, value):
 		"""
 		Removes a node containing ``value`` from the tree.
-		
+
 		Args:
 			value (object): A python object that implements ``__cmp__()`` or rich comparisons, to be removed from the tree.
 
@@ -232,7 +234,7 @@ class ThreadedTree(object):
 
 		Returns:
 			BidirectionalIterator: iterator allowing forward or backward traversal of the underlying tree.
-		""" 
+		"""
 		return bidirectionaliterator.BidirectionalIterator(self)
 
 	def reverse(self):
@@ -411,7 +413,7 @@ class ThreadedTree(object):
 			far_right = far_right.right
 
 		far_right.right = far_left
-		
+
 		if on_right:
 			parent.right = current.right
 		else:
