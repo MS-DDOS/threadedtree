@@ -33,24 +33,32 @@ class ThreadedAVLTree(threadedtree.ThreadedTree):
 		node.balance = self.calculate_balance(node)
 
 		if(node.balance == -2):
-			if(self.height_of_node(node.left.left) > self.height_of_node(node.left.right)):
+			(left, right) = self.children_heights(node.left)
+			if(left > right):
 				node = self.rotate_right(node)
 			else:
 				node = self.rotate_left_right(node)
 
 		elif(node.balance == 2):
-			if(self.height_of_node(node.right.right) > self.height_of_node(node.right.left)):
+			(left, right) = self.children_heights(node.right)
+			if(right > left):
 				node = self.rotate_left(node)
 			else:
 				node = self.rotate_right_left(node)
 
-		print(node.balance)
-		print(node.val)
-		# if(node.parent != None):
-		# 	self.balance(node.parent)
-		# else:
-		# 	self.root = node
-		self.root = node
+		if(node.parent != None):
+			self.balance(node.parent)
+		else:
+			self.root = node
+
+	def children_heights(self, node):
+		left = 0
+		if(node.lthreaded):
+			left = self.height_of_node(node.left)
+		right = 0
+		if(node.rthreaded):
+			right = self.height_of_node(node.right)
+		return(left, right)
 
 	def rotate_right_left(self, node):
 		node.right = self.rotate_right(node.right)
@@ -61,7 +69,9 @@ class ThreadedAVLTree(threadedtree.ThreadedTree):
 		return self.rotate_right(node)
 
 	def rotate_left(self, node):
+
 		temp = node.right
+
 		if temp.lthreaded:
 			node.right = temp.left
 		else:
@@ -107,10 +117,15 @@ class ThreadedAVLTree(threadedtree.ThreadedTree):
 		return temp
 
 	def calculate_balance(self, node):
-		return self.height_of_node(node.right) - self.height_of_node(node.left)
+		return (0 if not node.rthreaded else self.height_of_node(node.right)) - (0 if not node.lthreaded else self.height_of_node(node.left))
 
 	def height_of_node(self, node):
-		return (0 if node == None else 1+max((self.height_of_node(node.left) if node.lthreaded else 0), (self.height_of_node(node.right) if node.rthreaded else 0)))
+		if node == None:
+			return 0
+
+		return 1 + max((0 if not node.lthreaded else self.height_of_node(node.left)), \
+			   (0 if not node.rthreaded else self.height_of_node(node.right)))
+
 
 	def _new_node(self, value):
 		"""Private method that returns a new tree node corresponding to the selected duplicate strategy"""
