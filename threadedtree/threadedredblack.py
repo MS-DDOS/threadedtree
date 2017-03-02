@@ -29,7 +29,6 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 		if not self._implements_comparisons(value):
 			return False
 		if self._len > 0 and self._remove(value): #take advantage of python short circuiting
-			self._balance_remove(self.access)
 			self._len -= 1
 			return True
 		return False
@@ -59,10 +58,10 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 
 		if current.lthreaded == False and current.rthreaded == False:
 			if self._delete_with_no_children(current):
-				if self.access.red:
-					self.access.red = False
-				else:
-					self._balance_del(parent)
+				NIL = self._new_node(None)
+				NIL.parent = parent
+				NIL.red = False
+				self._balance_remove(NIL)
 				return True
 			return False
 		elif current.lthreaded == True and current.rthreaded == True:
@@ -71,6 +70,8 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 			if self._delete_with_left_child(current, parent):
 				self.access.parent = parent
 				self.access.red = False
+				return True
+			return False
 		else:
 			if self._delete_with_right_child(current, parent):
 				self.access.parent = parent
@@ -78,8 +79,68 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 				return True
 			return False
 
-	def _balance_del(self):
-		pass
+	def _balance_remove(self, node):
+		# Case 1
+		if node.parent == None:
+			print "Case #1"
+			return
+		sibling = self._sibling(node)
+		print "SIBLING IS",sibling.val
+		# Case 2
+		if sibling.red:
+			print "Case #2"
+			if sibling == sibling.parent.left:
+				self.rotate_left(sibling)
+			else:
+				self.rotate_right(sibling)
+			sibling = self._sibling(node)
+		# Case 3
+		if node.parent.red == False and sibling.red == False and (sibling.lthreaded and sibling.left.red == False) and (sibling.rthreaded and sibling.right.red == False):
+			sibling.red = True
+			print "Case #3"
+			self._balance_remove(node.parent)
+			return
+		# Case 4
+		if node.parent.red == True and sibling.red == False and (sibling.left != None and sibling.left.red == False) and (sibling.right != None and sibling.right.red == False):
+			sibling.red = True
+			node.parent.red = True
+			print "Case #4"
+			return
+		# Case 5
+		if sibling.red == False:
+			if node == node.parent.left and (sibling.right != None and sibling.right.red == False) and (sibling.left != None and sibling.left.red == True):
+				print "Case #5"
+				self.rotate_left(sibling.left)
+			elif node == node.parent.right and (sibling.left != None and sibling.left.red == False) and (sibling.right != None and sibling.right.red == True):
+				print "Case #5"
+				self.rotate_right(sibling.right)
+			sibling = self._sibling(node)
+		# Case 6
+		if sibling == sibling.parent.left:
+			print "Case #6 R"
+			sibling.parent.red = False
+			sibling.red = True
+			self.rotate_right(sibling.parent)
+		else:
+			print "Case #6 L"
+			sibling.parent.red = False
+			sibling.red = True
+			self.rotate_left(sibling.parent)
+		print "NODE Is",node.val, "Parent is",node.parent.val
+		sibling = self._sibling(node.parent)
+		print "Empty node's parent's parent", node.parent.parent.val
+		print "New sibling is",sibling.val
+		if sibling:
+			sibling.red = False
+
+	def _sibling(self, node):
+		print "FINDING SIBLING FOR",node.val
+		if node == self.root:
+			return None
+		elif node.parent.val > self.root.val: #This is the problem. Probably need to link NIL node up for a second to make it all work...
+			return node.parent.right
+		else:
+			return node.parent.left
 
 	def _balance_insert(self, node):
 		while node != self.root and node.parent.red:
@@ -114,6 +175,7 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 		self.root.red = False
 
 	def rotate_left(self, node):
+		print "Rotating left..."
 		temp = node.right
 		if temp.lthreaded:
 			node.right = temp.left
@@ -136,6 +198,7 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 		node.parent = temp
 
 	def rotate_right(self, node):
+		print "Rotating right..."
 		temp = node.left
 		if temp.rthreaded:
 			node.left = temp.right
