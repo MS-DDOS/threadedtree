@@ -49,3 +49,8 @@ class Threaded_Red_Black_Tree_Node(Threaded_Tree_Node):
 		super(Threaded_Red_Black_Tree_Node, self).__init__(val, left, right)
 		self.red = True # False if node is black
 		print self.val
+
+class Threaded_AVL_Tree_Node(Threaded_Tree_Node):
+	def __init__(self, val=None, left=None, right=None):
+		super(Threaded_AVL_Tree_Node, self).__init__(val, left, right)
+		self.balance = 0 # balance factor
