@@ -346,13 +346,13 @@ class ThreadedTree(object):
 	def _delete_root(self):
 		"""Private method that provides functionality for removing the ``root`` from the tree."""
 		if self._len == 1:
-			self.root = self.head = self.tail = None
+			self.root = self.head = self.tail = self.access = None
 			return True
 		if self.root.right == None:
 			if not self.root.left.rthreaded:
 				self.root.left.right = None
 				self.tail = self.root.left
-				if self._len == 2:
+				if self._len == 2: # Len is not decremented until after this node is successfully deleted
 					self.head = self.tail
 			else:
 				far_right = self.root.left
@@ -362,7 +362,7 @@ class ThreadedTree(object):
 				self.tail = far_right #Update tail
 			new_root = self.root.left
 			del self.root
-			self.root = new_root
+			self.root = self.access = new_root
 			return True
 		elif not self.root.left:
 			if not self.root.right.lthreaded:
@@ -378,7 +378,7 @@ class ThreadedTree(object):
 				self.head = far_left # update head
 			new_root = self.root.right
 			del self.root
-			self.root = new_root
+			self.root = self.access = new_root
 			return True
 
 		new_root = self.root.right
@@ -395,7 +395,7 @@ class ThreadedTree(object):
 		far_left.left = self.root.left
 		far_right.right = far_left
 		del self.root
-		self.root = new_root
+		self.root = self.access = new_root
 		return True
 
 	def _delete_with_both_children(self, current, parent):
@@ -421,29 +421,32 @@ class ThreadedTree(object):
 		else:
 			parent.left = current.right
 		del current
+		self.access = parent
 		return True
 
 	def _delete_with_no_children(self, current):
 		"""Private method that provides functionality for removing a node with both right and left threads from the tree."""
 		if current.left == None:
-			self.head = current.right
+			self.head = self.access = current.right
 			current.right.lthreaded = False
 			current.right.left = None
 			del current
 			return True
 		elif current.right == None:
-			self.tail = current.left
+			self.tail = self.access = current.left
 			current.left.rthreaded = False
 			current.left.right = None
 			del current
 			return True
 		else:
 			if current.left.right == current:
+				self.access = current.left
 				current.left.rthreaded = False
 				current.left.right = current.right
 				del current
 				return True
 			else:
+				self.access = current.right
 				current.right.lthreaded = False
 				current.right.left = current.left
 				del current
@@ -476,6 +479,7 @@ class ThreadedTree(object):
 			parent.left = current.left
 
 		del current
+		self.access = parent
 		return True
 
 	def _delete_with_right_child(self, current, parent):
@@ -505,4 +509,5 @@ class ThreadedTree(object):
 			parent.left = current.right
 
 		del current
+		self.access = parent
 		return True
