@@ -199,6 +199,8 @@ class ThreadedTree(object):
 			new_node.rthreaded = current.rthreaded
 			current.rthreaded = True
 			new_node.left = current
+		else:
+			return self._new_node(value) #Allows equal case to be skipped
 
 		try:
 			if new_node.left == None:
