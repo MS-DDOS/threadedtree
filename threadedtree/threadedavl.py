@@ -15,9 +15,9 @@
 
 """This module contains an AVL double threaded binary search tree which is optimized for in-order traversal and uses no stack or recursion to perform its functions."""
 
-import treenodes, threadedtree
+import treenodes, threadedtree, balancedtree
 
-class ThreadedAVLTree(threadedtree.ThreadedTree):
+class ThreadedAVLTree(balancedtree.BalancedThreadedTree):
 	def __init__(self, iterable=[], duplicate_strategy="none", root=None):
 		super(ThreadedAVLTree, self).__init__(iterable, duplicate_strategy, root)
 
@@ -67,54 +67,6 @@ class ThreadedAVLTree(threadedtree.ThreadedTree):
 	def rotate_left_right(self, node):
 		node.left = self.rotate_left(node.left)
 		return self.rotate_right(node)
-
-	def rotate_left(self, node):
-
-		temp = node.right
-
-		if temp.lthreaded:
-			node.right = temp.left
-		else:
-			node.right = temp
-			node.rthreaded = False
-
-		if temp.lthreaded and temp.left != None:
-			temp.left.parent = node
-
-		temp.parent = node.parent
-		if node.parent == None:
-			self.root = temp
-		elif node == node.parent.left:
-			node.parent.left = temp
-		else:
-			node.parent.right = temp
-		temp.left = node
-		temp.lthreaded = True
-		node.parent = temp
-		return temp
-
-	def rotate_right(self, node):
-		temp = node.left
-		if temp.rthreaded:
-			node.left = temp.right
-		else:
-			node.left = temp
-			node.lthreaded = False
-
-		if temp.rthreaded and temp.right != None:
-			temp.right.parent = node
-
-		temp.parent = node.parent
-		if node.parent == None:
-			self.root = temp
-		elif node == node.parent.right:
-			node.parent.right = temp
-		else:
-			node.parent.left = temp
-		temp.right = node
-		temp.rthreaded = True
-		node.parent = temp
-		return temp
 
 	def calculate_balance(self, node):
 		return (0 if not node.rthreaded else self.height_of_node(node.right)) - (0 if not node.lthreaded else self.height_of_node(node.left))

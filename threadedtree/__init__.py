@@ -17,5 +17,7 @@ from threadedtree import ThreadedTree
 from bidirectionaliterator import BidirectionalIterator
 from treenodes import *
 
+from balancedtree import BalancedThreadedTree
+
 from threadedredblack import ThreadedRedBlackTree
 from threadedavl import ThreadedAVLTree
