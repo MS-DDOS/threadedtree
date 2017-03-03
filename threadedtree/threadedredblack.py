@@ -15,17 +15,21 @@
 
 """This module contains an red/black double threaded binary search tree which is optimized for in-order traversal and uses no stack or recursion to perform its functions."""
 
-import treenodes, threadedtree
+import treenodes, threadedtree, balancedtree
 
-class ThreadedRedBlackTree(threadedtree.ThreadedTree):
+class ThreadedRedBlackTree(balancedtree.BalancedThreadedTree):
 	def __init__(self, iterable=[], duplicate_strategy="none", root=None):
 		super(ThreadedRedBlackTree, self).__init__(iterable, duplicate_strategy, root)
 
 	def insert(self, value):
-		super(ThreadedRedBlackTree, self).insert(value)
-		self.balance(self.access)
+		new_node = super(ThreadedRedBlackTree, self).insert(value)
+		self.balance(new_node.parent)
 
 	def balance(self, node):
+
+		if(node == None):
+			return
+
 		while node != self.root and node.parent.red:
 			if node.parent == node.parent.parent.left:
 				temp = node.parent.parent.right
@@ -56,52 +60,6 @@ class ThreadedRedBlackTree(threadedtree.ThreadedTree):
 					node.parent.parent.red = True
 					self.rotate_left(node.parent.parent)
 		self.root.red = False
-
-	def rotate_left(self, node):
-		temp = node.right
-		if temp.lthreaded:
-			node.right = temp.left
-		else:
-			node.right = temp
-			node.rthreaded = False
-
-		if temp.lthreaded and temp.left != None:
-			temp.left.parent = node
-
-		temp.parent = node.parent
-		if node.parent == None:
-			self.root = temp
-		elif node == node.parent.left:
-			node.parent.left = temp
-		else:
-			node.parent.right = temp
-		temp.left = node
-		temp.lthreaded = True
-		node.parent = temp
-		return temp
-
-	def rotate_right(self, node):
-		temp = node.left
-		if temp.rthreaded:
-			node.left = temp.right
-		else:
-			node.left = temp
-			node.lthreaded = False
-
-		if temp.rthreaded and temp.right != None:
-			temp.right.parent = node
-
-		temp.parent = node.parent
-		if node.parent == None:
-			self.root = temp
-		elif node == node.parent.right:
-			node.parent.right = temp
-		else:
-			node.parent.left = temp
-		temp.right = node
-		temp.rthreaded = True
-		node.parent = temp
-		return temp
 
 	def _new_node(self, value):
 		"""Private method that returns a new tree node corresponding to the selected duplicate strategy"""
